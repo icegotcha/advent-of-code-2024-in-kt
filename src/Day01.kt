@@ -11,30 +11,27 @@ fun main() {
              .unzip()
         leftList = leftList.sorted()
         rightList = rightList.sorted()
-        val distance = mutableListOf<Long>()
-        for (index in 0..input.size-1) {
-            distance.addFirst(abs(leftList[index] - rightList[index]))
-        }
-        return distance.sum()
+        return leftList.zip(rightList).sumOf { abs(it.first - it.second) }
     }
 
     fun part2(input: List<String>): Long {
-        var (leftList, rightList) = input.map {
+        val (leftList, rightList) = input.map {
             it.split(' ')
                 .filter { it.isNotBlank() }
                 .map { it.toLong() }
         }
             .map { Pair(it[0], it[1]) }
             .unzip()
-        leftList = leftList.sorted()
-        rightList = rightList.sorted()
-        val countMap =  leftList.associateWith { 0L }.toMutableMap()
-        for (index in 0..input.size-1) {
-            val numToCount = leftList[index]
-            val numCountInRightList = rightList.filter { it == numToCount }.size
-            countMap[numToCount] = countMap[numToCount]!! + numCountInRightList
+        val countTotalMap =  leftList.associateWith { 0L }.toMutableMap()
+        val countNumCacheMap = leftList.associateWith { 0L }.toMutableMap()
+        leftList.forEach { numToCount ->
+            if (countNumCacheMap.containsKey(numToCount)) {
+                val count =  rightList.filter { it == numToCount }.size.toLong()
+                countNumCacheMap[numToCount] = count
+            }
+            countTotalMap[numToCount] = countTotalMap[numToCount]!! + countNumCacheMap[numToCount]!!
         }
-        return countMap.entries.sumOf { it.key * it.value }
+        return countTotalMap.entries.sumOf { it.key * it.value }
     }
 
     // Test if implementation meets criteria from the description, like:
