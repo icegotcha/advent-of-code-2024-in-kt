@@ -25,19 +25,12 @@ fun main() {
         if (isSafe((levels))) {
             return true
         }
-
-        var isSkippedSafe = false
         levels.indices.forEach {
             val skippedLevels = levels.toMutableList().apply { removeAt(it) }
             if (isSafe(skippedLevels)) {
-                isSkippedSafe = true
-                return@forEach
+                return true
             }
         }
-        if (isSkippedSafe) {
-            return true
-        }
-
         return false
     }
 
